@@ -1,8 +1,12 @@
+// photo_upload_screen.dart
+
 import 'package:flutter/material.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'package:logger/logger.dart';
+import 'package:camera/camera.dart';
+import 'camera_screen.dart';
 
 class PhotoUploadScreen extends StatefulWidget {
   const PhotoUploadScreen({super.key});
@@ -16,22 +20,41 @@ class PhotoUploadScreenState extends State<PhotoUploadScreen> {
   bool isUploading = false;
   double uploadProgress = 0.0;
   File? imageFile;
+  late CameraController _cameraController;
   final Logger _logger = Logger();
 
-  void _selectAndPreviewImage(ImageSource source) async {
-    try {
-      final pickedFile = await picker.pickImage(source: source);
+  @override
+  void initState() {
+    super.initState();
+    initializeCamera();
+  }
 
+  Future<void> initializeCamera() async {
+    final cameras = await availableCameras();
+    _cameraController = CameraController(cameras[0], ResolutionPreset.medium);
+    await _cameraController.initialize();
+  }
+
+  @override
+  void dispose() {
+    _cameraController.dispose();
+    super.dispose();
+  }
+
+  void _selectAndPreviewImage() async {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => CameraScreen(_cameraController),
+      ),
+    ).then((pickedFile) {
       if (pickedFile != null) {
         setState(() {
           imageFile = File(pickedFile.path);
-          uploadProgress =
-              0.0; // Reset upload progress when selecting a new image
+          uploadProgress = 0.0;
         });
       }
-    } catch (e) {
-      _logger.e('Error selecting photo: $e');
-    }
+    });
   }
 
   Future<void> _uploadPhoto(ScaffoldMessengerState scaffoldMessenger) async {
@@ -141,9 +164,8 @@ class PhotoUploadScreenState extends State<PhotoUploadScreen> {
                   Column(
                     children: [
                       ElevatedButton(
-                        onPressed: isUploading
-                            ? null
-                            : () => _selectAndPreviewImage(ImageSource.camera),
+                        onPressed:
+                            isUploading ? null : () => _selectAndPreviewImage(),
                         child: isUploading
                             ? const CircularProgressIndicator()
                             : const Text('Take a Photo'),
@@ -152,7 +174,17 @@ class PhotoUploadScreenState extends State<PhotoUploadScreen> {
                       ElevatedButton(
                         onPressed: isUploading
                             ? null
-                            : () => _selectAndPreviewImage(ImageSource.gallery),
+                            : () async {
+                                final pickedFile = await picker.pickImage(
+                                  source: ImageSource.gallery,
+                                );
+                                if (pickedFile != null) {
+                                  setState(() {
+                                    imageFile = File(pickedFile.path);
+                                    uploadProgress = 0.0;
+                                  });
+                                }
+                              },
                         child: isUploading
                             ? const CircularProgressIndicator()
                             : const Text('Choose from Gallery'),
