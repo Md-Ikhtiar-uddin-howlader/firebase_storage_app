@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "945818395084",
+    "project_id": "casestudy-f2d42",
+    "storage_bucket": "casestudy-f2d42.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:945818395084:android:191960c9b13d880552bd69",
+        "android_client_info": {
+          "package_name": "com.example.firebase_storage_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAi0r9viuirgmD6xyv_pWNzI6vxNgKGPvg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
