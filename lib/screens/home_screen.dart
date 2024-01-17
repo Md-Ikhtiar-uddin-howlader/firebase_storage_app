@@ -16,7 +16,7 @@ class HomeScreen extends StatelessWidget {
               MaterialPageRoute(builder: (context) => PhotoUploadScreen()),
             );
           },
-          child: Text('Take Photo'),
+          child: Text('Upload Photo'),
         ),
       ),
     );
