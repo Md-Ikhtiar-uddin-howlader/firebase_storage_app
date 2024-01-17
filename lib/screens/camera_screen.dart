@@ -12,9 +12,7 @@ class CameraScreen extends StatefulWidget {
 }
 
 class _CameraScreenState extends State<CameraScreen> {
-  late CameraController cameraController;
   bool isFrontCamera = false;
-  bool isFlashOn = false;
   final Logger _logger = Logger();
 
   @override
@@ -25,7 +23,8 @@ class _CameraScreenState extends State<CameraScreen> {
           CameraPreview(
             widget.cameraController,
             child: FittedBox(
-              fit: BoxFit.cover,
+              fit: BoxFit
+                  .cover, // Ensures full screen coverage without stretching
               child: SizedBox(
                 width: MediaQuery.of(context).size.width,
                 height: MediaQuery.of(context).size.height,
@@ -69,8 +68,6 @@ class _CameraScreenState extends State<CameraScreen> {
                   ElevatedButton(
                     onPressed: () async {
                       try {
-                        await _toggleFlash();
-
                         final XFile photo =
                             await widget.cameraController.takePicture();
                         _logger.d('Photo taken successfully: ${photo.path}');
@@ -96,16 +93,6 @@ class _CameraScreenState extends State<CameraScreen> {
                       size: 36,
                     ),
                   ),
-                  IconButton(
-                    icon: Icon(
-                      isFlashOn ? Icons.flash_on : Icons.flash_off,
-                      color: Colors.white,
-                      size: 30,
-                    ),
-                    onPressed: () {
-                      _toggleFlash();
-                    },
-                  ),
                 ],
               ),
             ),
@@ -115,7 +102,7 @@ class _CameraScreenState extends State<CameraScreen> {
     );
   }
 
-  Future<void> _toggleCamera(BuildContext context) async {
+  void _toggleCamera(BuildContext context) async {
     final cameras = await availableCameras();
     final newCameraDescription = isFrontCamera
         ? cameras.firstWhere(
@@ -123,18 +110,14 @@ class _CameraScreenState extends State<CameraScreen> {
         : cameras.firstWhere(
             (camera) => camera.lensDirection == CameraLensDirection.back);
 
+    if (widget.cameraController.value.isInitialized) {
+      await widget.cameraController.dispose();
+    }
+
     final newController = CameraController(
       newCameraDescription,
       ResolutionPreset.medium,
     );
-
-    updateCameraController(newController);
-  }
-
-  Future<void> updateCameraController(CameraController newController) async {
-    if (widget.cameraController.value.isInitialized) {
-      await widget.cameraController.dispose();
-    }
 
     await newController.initialize();
 
@@ -144,18 +127,9 @@ class _CameraScreenState extends State<CameraScreen> {
     });
   }
 
-  Future<void> _toggleFlash() async {
-    if (widget.cameraController.value.isInitialized) {
-      final bool currentFlash =
-          widget.cameraController.value.flashMode == FlashMode.torch;
-      final FlashMode newFlashMode =
-          currentFlash ? FlashMode.off : FlashMode.torch;
-
-      await widget.cameraController.setFlashMode(newFlashMode);
-
-      setState(() {
-        isFlashOn = !currentFlash;
-      });
-    }
+  @override
+  void dispose() {
+    widget.cameraController.dispose();
+    super.dispose();
   }
 }

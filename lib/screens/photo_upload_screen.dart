@@ -1,5 +1,3 @@
-// photo_upload_screen.dart
-
 import 'package:flutter/material.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:image_picker/image_picker.dart';
@@ -33,12 +31,6 @@ class PhotoUploadScreenState extends State<PhotoUploadScreen> {
     final cameras = await availableCameras();
     _cameraController = CameraController(cameras[0], ResolutionPreset.medium);
     await _cameraController.initialize();
-  }
-
-  @override
-  void dispose() {
-    _cameraController.dispose();
-    super.dispose();
   }
 
   void _selectAndPreviewImage() async {
