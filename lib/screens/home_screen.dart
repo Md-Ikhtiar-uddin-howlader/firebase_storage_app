@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'photo_upload_screen.dart';
+import 'photo_delete_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   @override
@@ -9,14 +10,29 @@ class HomeScreen extends StatelessWidget {
         title: Text('Firebase Storage App'),
       ),
       body: Center(
-        child: ElevatedButton(
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => PhotoUploadScreen()),
-            );
-          },
-          child: Text('Upload Photo'),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => PhotoUploadScreen()),
+                );
+              },
+              child: Text('Upload Photo'),
+            ),
+            SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => PhotoDeleteScreen()),
+                );
+              },
+              child: Text('Delete Photos'),
+            ),
+          ],
         ),
       ),
     );
