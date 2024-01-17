@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'photo_upload_screen.dart';
 import 'photo_delete_screen.dart';
+import 'photo_view_screen.dart'; // Import the new screen
 
 class HomeScreen extends StatelessWidget {
   @override
@@ -31,6 +32,22 @@ class HomeScreen extends StatelessWidget {
                 );
               },
               child: Text('Delete Photos'),
+            ),
+            SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () {
+                // Replace 'path/to/your/image.jpg' with the actual path
+                // of the image you want to view
+                String imagePath = 'photos/2024-01-17 18:03:36.758498.png';
+
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => PhotoViewScreen(imagePath: imagePath),
+                  ),
+                );
+              },
+              child: Text('View Image'),
             ),
           ],
         ),
