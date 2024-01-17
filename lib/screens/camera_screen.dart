@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
 import 'package:logger/logger.dart';
 
+// ignore: must_be_immutable
 class CameraScreen extends StatefulWidget {
   CameraController cameraController;
   CameraScreen(this.cameraController, {super.key});
@@ -24,8 +25,7 @@ class _CameraScreenState extends State<CameraScreen> {
           CameraPreview(
             widget.cameraController,
             child: FittedBox(
-              fit: BoxFit
-                  .cover, // Ensures full screen coverage without stretching
+              fit: BoxFit.cover,
               child: SizedBox(
                 width: MediaQuery.of(context).size.width,
                 height: MediaQuery.of(context).size.height,
@@ -69,6 +69,8 @@ class _CameraScreenState extends State<CameraScreen> {
                   ElevatedButton(
                     onPressed: () async {
                       try {
+                        await _toggleFlash();
+
                         final XFile photo =
                             await widget.cameraController.takePicture();
                         _logger.d('Photo taken successfully: ${photo.path}');
@@ -95,13 +97,13 @@ class _CameraScreenState extends State<CameraScreen> {
                     ),
                   ),
                   IconButton(
-                    icon: const Icon(
-                      Icons.flash_off,
+                    icon: Icon(
+                      isFlashOn ? Icons.flash_on : Icons.flash_off,
                       color: Colors.white,
                       size: 30,
                     ),
                     onPressed: () {
-                      // Handle flash toggle
+                      _toggleFlash();
                     },
                   ),
                 ],
@@ -113,7 +115,7 @@ class _CameraScreenState extends State<CameraScreen> {
     );
   }
 
-  void _toggleCamera(BuildContext context) async {
+  Future<void> _toggleCamera(BuildContext context) async {
     final cameras = await availableCameras();
     final newCameraDescription = isFrontCamera
         ? cameras.firstWhere(
@@ -126,12 +128,10 @@ class _CameraScreenState extends State<CameraScreen> {
       ResolutionPreset.medium,
     );
 
-    updateCameraController(newController); // No need for await here
-
-    // If you need to perform other operations after updating the controller, you can do them here.
+    updateCameraController(newController);
   }
 
-  void updateCameraController(CameraController newController) async {
+  Future<void> updateCameraController(CameraController newController) async {
     if (widget.cameraController.value.isInitialized) {
       await widget.cameraController.dispose();
     }
@@ -144,9 +144,18 @@ class _CameraScreenState extends State<CameraScreen> {
     });
   }
 
-  @override
-  void dispose() {
-    widget.cameraController.dispose();
-    super.dispose();
+  Future<void> _toggleFlash() async {
+    if (widget.cameraController.value.isInitialized) {
+      final bool currentFlash =
+          widget.cameraController.value.flashMode == FlashMode.torch;
+      final FlashMode newFlashMode =
+          currentFlash ? FlashMode.off : FlashMode.torch;
+
+      await widget.cameraController.setFlashMode(newFlashMode);
+
+      setState(() {
+        isFlashOn = !currentFlash;
+      });
+    }
   }
 }
