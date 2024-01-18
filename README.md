@@ -1,16 +1,9 @@
 # firebase_storage_app
 
-A new Flutter project.
 
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+#PREPARED BY:
+<tr><th>Name</th>Name 	<th>Matric No</th></tr>
+<tr><td>MD IKHTIAR UDDIN HOWLADER</td> 	<td>1834619</td></tr>
+<tr><td>MUHAMMAD 'AFFIF BIN BIN RUSLI</td>	<td>1923949</td></tr>
+<tr><td>AMIERUL SYAHMI BIN MOHD HASBI</td>	<td>2016973</td></tr>
+<tr><td>DIMYATI AGUNG NABHAN</td>	<td>1929465</td></tr>
