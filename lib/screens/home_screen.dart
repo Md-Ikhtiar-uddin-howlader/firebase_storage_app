@@ -36,18 +36,13 @@ class HomeScreen extends StatelessWidget {
             SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
-                // Replace 'path/to/your/image.jpg' with the actual path
-                // of the image you want to view
-                String imagePath = 'photos/2024-01-17 18:03:36.758498.png';
-
+                // Navigate to PhotoViewScreen without specifying a particular image path
                 Navigator.push(
                   context,
-                  MaterialPageRoute(
-                    builder: (context) => PhotoViewScreen(imagePath: imagePath),
-                  ),
+                  MaterialPageRoute(builder: (context) => PhotoViewScreen()),
                 );
               },
-              child: Text('View Image'),
+              child: Text('View All Photos'),
             ),
           ],
         ),

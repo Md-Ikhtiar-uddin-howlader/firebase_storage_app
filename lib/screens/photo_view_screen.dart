@@ -3,39 +3,37 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:logger/logger.dart';
 
 class PhotoViewScreen extends StatefulWidget {
-  final String imagePath;
-
-  PhotoViewScreen({required this.imagePath, Key? key}) : super(key: key);
-
   @override
   _PhotoViewScreenState createState() => _PhotoViewScreenState();
 }
 
 class _PhotoViewScreenState extends State<PhotoViewScreen> {
-  String imageUrl = '';
+  List<String> imagePaths = []; // List to store image paths
   final Logger _logger = Logger();
 
   @override
   void initState() {
     super.initState();
-    _loadImageUrl();
+    _loadImagePaths();
   }
 
-  Future<void> _loadImageUrl() async {
+  Future<void> _loadImagePaths() async {
     try {
-      // Get the reference to the photo in Firebase Storage
-      Reference storageReference =
-          FirebaseStorage.instance.ref().child(widget.imagePath);
+      // Get references to all photos in Firebase Storage
+      ListResult result =
+          await FirebaseStorage.instance.ref().child('photos').list();
 
-      // Get the download URL for the image
-      imageUrl = await storageReference.getDownloadURL();
+      // Extract image paths from the result
+      result.items.forEach((Reference ref) {
+        imagePaths.add(ref.fullPath);
+      });
 
-      // Force a rebuild to display the image
+      // Force a rebuild to display the images
       if (mounted) {
         setState(() {});
       }
     } catch (e) {
-      _logger.e('Error loading image: $e');
+      _logger.e('Error loading image paths: $e');
     }
   }
 
@@ -45,16 +43,45 @@ class _PhotoViewScreenState extends State<PhotoViewScreen> {
       appBar: AppBar(
         title: Text('Photo View'),
       ),
-      body: Center(
-        child: imageUrl.isNotEmpty
-            ? Image.network(
-                imageUrl,
-                height: MediaQuery.of(context).size.height * 0.8,
-                width: MediaQuery.of(context).size.width,
-                fit: BoxFit.contain,
-              )
-            : CircularProgressIndicator(),
+      body: GridView.builder(
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2, // You can adjust the number of columns
+        ),
+        itemCount: imagePaths.length,
+        itemBuilder: (context, index) {
+          return Card(
+            elevation: 5,
+            child: InkWell(
+              onTap: () {
+                // You can handle the tap if needed
+              },
+              child: FutureBuilder<String>(
+                future: getImageUrl(imagePaths[index]),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return CircularProgressIndicator();
+                  } else if (snapshot.hasError) {
+                    return Text('Error: ${snapshot.error}');
+                  } else {
+                    return Image.network(
+                      snapshot.data!,
+                      fit: BoxFit.cover,
+                    );
+                  }
+                },
+              ),
+            ),
+          );
+        },
       ),
     );
+  }
+
+  Future<String> getImageUrl(String imagePath) async {
+    // Get the download URL for the image
+    return await FirebaseStorage.instance
+        .ref()
+        .child(imagePath)
+        .getDownloadURL();
   }
 }
