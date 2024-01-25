@@ -46,16 +46,16 @@ class _PhotoDeleteScreenState extends State<PhotoDeleteScreen> {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: Text('Confirm Deletion'),
-            content: Text('Do you really want to delete this photo?'),
+            title: const Text('Confirm Deletion'),
+            content: const Text('Do you really want to delete this photo?'),
             actions: <Widget>[
               TextButton(
                 onPressed: () => Navigator.of(context).pop(false),
-                child: Text('Cancel'),
+                child: const Text('Cancel'),
               ),
               TextButton(
                 onPressed: () => Navigator.of(context).pop(true),
-                child: Text('Delete'),
+                child: const Text('Delete'),
               ),
             ],
           );
@@ -93,7 +93,7 @@ class _PhotoDeleteScreenState extends State<PhotoDeleteScreen> {
           title: const Text('Delete Photo'),
         ),
         body: GridView.builder(
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2, // You can adjust the number of columns
           ),
           itemCount: photoFileNames.length,
@@ -102,7 +102,7 @@ class _PhotoDeleteScreenState extends State<PhotoDeleteScreen> {
               future: getImageUrl(photoFileNames[index]),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return CircularProgressIndicator();
+                  return const CircularProgressIndicator();
                 } else if (snapshot.hasError) {
                   return Text('Error: ${snapshot.error}');
                 } else {
